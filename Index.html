@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projeto WebXR - Entrega</title>
+    <style>
+        body { margin: 0; overflow: hidden; font-family: Arial, sans-serif; }
+    </style>
+</head>
+<body>
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { ARButton } from 'three/addons/webxr/ARButton.js';
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 20);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.xr.enabled = true;
+        document.body.appendChild(renderer.domElement);
+
+        // Botão de Realidade Aumentada
+        document.body.appendChild(ARButton.createButton(renderer));
+
+        const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
+        scene.add(light);
+
+        // --- AS 3 PROPRIEDADES MODIFICADAS ---
+
+        // 1. Geometria: Box (Cubo esticado verticalmente)
+        const geometry = new THREE.BoxGeometry(0.1, 0.3, 0.1); 
+
+        // 2. Material: Azul com Transparência (Wireframe opcional se quiser)
+        const material = new THREE.MeshStandardMaterial({ 
+            color: 0x0000ff, 
+            transparent: true, 
+            opacity: 0.7 
+        });
+
+        const myObject = new THREE.Mesh(geometry, material);
+
+        // 3. Posição: 1.5m de altura e 1m à frente
+        myObject.position.set(0, 1.5, -1.0);
+
+        scene.add(myObject);
+
+        function animate() {
+            renderer.setAnimationLoop(() => {
+                myObject.rotation.y += 0.01; // Rotação para o efeito visual
+                renderer.render(scene, camera);
+            });
+        }
+        animate();
+    </script>
+</body>
+</html>
